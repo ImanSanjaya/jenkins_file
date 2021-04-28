@@ -2,25 +2,58 @@ pipeline {
     agent any
 
     stages {
-        stage ('Compile Stage') {
+        stage ('Process One') {
 
             steps {
-                echo 'On Process Compile Stage'
+                echo 'Hi, Saya Iman Sanjaya Dari FUSI'
             }
         }
 
-        stage ('Testing Stage') {
+        stage ('Process Two') {
 
             steps {
-                echo 'On Process Testing Stage'
+                input('Apakah kamu akan melanjutkan Proses?')
             }
         }
 
 
-        stage ('Deployment Stage') {
+        stage ('Process Three') {
             
+            when {
+                not{
+                    branch "main"
+                }
+            }
             steps {
-                echo 'On Process Deployment Stage'
+                echo 'Anda Telah Memilih Untuk Melanjutkan Proses'
+            }
+
+        }
+
+        stage ('Process Four') {
+
+            paraller {
+
+                stage ('Unit Test') {
+
+                    steps {
+                        input('Proses Unit Test Berjalan . . .')
+                    }
+                }
+
+                stage ('Integration Test') {
+
+                    agent {
+                        docker {
+                            reuseNode false
+                            image 'ubuntu'
+                        }
+                    }
+                    steps {
+                        echo 'Running the integration test . . .'
+                    }
+                }
+
             }
 
         }
